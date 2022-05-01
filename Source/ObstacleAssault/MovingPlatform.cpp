@@ -23,20 +23,33 @@ void AMovingPlatform::BeginPlay()
 void AMovingPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	MovePlatform(DeltaTime);
+	RotatePlatform(DeltaTime);
+}
 
-	FVector CurrentLocation = GetActorLocation();
-	CurrentLocation = CurrentLocation + (PlatformVelocity * DeltaTime);
-	SetActorLocation(CurrentLocation);
-
+void AMovingPlatform::MovePlatform(float DeltaTime)
+{
 	DistanceMoved = FVector::Dist(StartLocation, CurrentLocation);
 
 	if (DistanceMoved > MoveLimit)
 	{
 		float OverShot = DistanceMoved > MoveLimit;
-		UE_LOG(LogTemp, Display, TEXT("Overshot limit by %f"), OverShot);
+		FString Name = GetName();
+		UE_LOG(LogTemp, Display, TEXT("%s overshot limit by %f"), *Name, OverShot);
 		FVector MoveDirection = PlatformVelocity.GetSafeNormal();
 		StartLocation = StartLocation + MoveDirection * MoveLimit;
 		SetActorLocation(StartLocation);
 		PlatformVelocity = -PlatformVelocity;
 	}
+	else
+	{
+		FVector CurrentLocation = GetActorLocation();
+		CurrentLocation = CurrentLocation + (PlatformVelocity * DeltaTime);
+		SetActorLocation(CurrentLocation);
+	}
+}
+
+void AMovingPlatform::RotatePlatform(float DeltaTime)
+{
+	// UE_LOG(LogTemp, Display, TEXT("Rotate message."));
 }
